@@ -1,6 +1,6 @@
 <?php
 
-// database/migrations/YYYY_MM_DD_HHMMSS_create_merchants_table.php
+// database/migrations/xxxx_xx_xx_xxxxxx_create_merchants_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,9 +13,7 @@ class CreateMerchantsTable extends Migration
         Schema::create('merchants', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('address');
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->json('location'); // Use JSON column to store latitude and longitude
             $table->timestamps();
         });
     }
@@ -24,4 +22,5 @@ class CreateMerchantsTable extends Migration
     {
         Schema::dropIfExists('merchants');
     }
-};
+}
+
