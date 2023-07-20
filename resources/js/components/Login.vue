@@ -1,28 +1,30 @@
 <template>
-    <div>
-      <h1>Login</h1>
-      <form @submit.prevent="login">
-        <input type="email" v-model="email" placeholder="Email" required>
-        <input type="password" v-model="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        email: "",
-        password: "",
-      };
+  <!-- ... Your existing template ... -->
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  // ... Your existing code ...
+
+  methods: {
+    login() {
+      axios
+        .post("/api/login", {
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          // Handle successful login
+          console.log("Logged in successfully!");
+          // You can redirect the user to a dashboard or other authenticated pages here
+        })
+        .catch((error) => {
+          // Handle login error
+          console.error("Login error:", error.response.data.message);
+        });
     },
-    methods: {
-      login() {
-        // Implement login logic using Axios to make an API request to the backend
-        // You will need to define the API endpoint on the backend to handle the login request
-      },
-    },
-  };
-  </script>
-  
+  },
+};
+</script>
