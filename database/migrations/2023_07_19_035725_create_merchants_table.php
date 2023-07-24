@@ -13,10 +13,14 @@ class CreateMerchantsTable extends Migration
         Schema::create('merchants', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('location'); // Use JSON column to store latitude and longitude
+            $table->string('email')->unique();
+            $table->text('address');
+            $table->float('latitude');
+            $table->float('longitude');
             $table->timestamps();
         });
     }
+
 
     public function down()
     {

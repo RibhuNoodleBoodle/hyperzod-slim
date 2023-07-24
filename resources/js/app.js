@@ -1,10 +1,7 @@
 import './bootstrap';
-import Vue from 'vue';
-import ProductList from './components/ProductList.vue';
 
-new Vue({
-  el: '#app',
-  components: {
-    ProductList,
-  },
-});
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
+Alpine.start();

@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/Product.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,11 +13,26 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'inventory',
+        'merchant_id',
     ];
 
-    public function getInventoryStatusAttribute()
+    public function merchant()
     {
-        return $this->inventory > 0 ? 'Available' : 'Out of Stock';
+        return $this->belongsTo(Merchant::class);
+    }
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
     }
 }

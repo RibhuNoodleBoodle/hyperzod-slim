@@ -11,6 +11,14 @@ class Merchant extends Model
 
     protected $fillable = [
         'name',
-        'location', // You can store the location data as JSON or separate latitude and longitude columns
+        'email',
+        'address',
+        'latitude',
+        'longitude',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
