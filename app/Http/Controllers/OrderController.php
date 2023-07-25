@@ -3,61 +3,92 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Order;
 use App\Models\Cart;
-use App\Events\OrderStatusChangedEvent;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use DB;
 
 class OrderController extends Controller
 {
-    public function show(Order $order) {
-        // Ensuring only the user who owns the order can see it
-        if (auth()->id() !== $order->user_id) {
-            return response()->json(['error' => 'This order does not belong to you.'], 403);
+    /**
+     * Place an order.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $user = $request->user(); // get the logged in user
+
+        // Get user's cart
+        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
+
+        if($cartItems->isEmpty()){
+            return response()->json(['message' => 'Cart is empty.']);
         }
-
-        // Eager load the order details to minimize SQL queries
-        $order->load('orderDetails.product');
-
-        return $order;
-    }
-
-    public function store(Request $request) {
-        $user = auth()->user();
-        $cart = $user->cart;
-        
-        // Ensuring there are products in the cart before placing an order
-        if ($cart->products->isEmpty()) {
-            return response()->json(['error' => 'No products in cart to order.'], 400);
-        }
-
-        // Calculate total order cost
-        $total = $cart->products->sum(function ($product) {
-            return $product->price; // Replace with your logic
-        });
 
         // Create a new order
-        $order = $user->orders()->create(['total' => $total]);
+        $order = new Order;
+        $order->user_id = $user->id;
+        $order->status = 'pending';
+        $order->save();
 
-        // Create order details
-        foreach ($cart->products as $product) {
-            $order->orderDetails()->create([
-                'product_id' => $product->id,
-                'quantity' => 1, // Replace with your logic
-                'price' => $product->price, // Replace with your logic
-            ]);
+        // Calculate total amount
+        $totalAmount = 0;
+        foreach($cartItems as $item){
+            $totalAmount += $item->product->price * $item->quantity;
 
-            // Subtract from product inventory
-            $product->inventory->quantity -= 1; // Replace with your logic
-            $product->inventory->save();
+            // Create order details
+            $orderDetail = new OrderDetail;
+            $orderDetail->order_id = $order->id;
+            $orderDetail->product_id = $item->product_id;
+            $orderDetail->quantity = $item->quantity;
+            $orderDetail->price = $item->product->price;
+            $orderDetail->save();
 
-            // Remove product from cart
-            $cart->products()->detach($product->id);
+            // Remove item from cart
+            $item->delete();
         }
 
-        // Broadcast order status changed event
-        event(new OrderStatusChangedEvent($order));
+        // Update total amount in order
+        $order->total_amount = $totalAmount;
+        $order->save();
 
-        return response()->json(['success' => 'Order placed successfully.', 'order' => $order], 201);
+        return response()->json(['message' => 'Order placed successfully.', 'order_id' => $order->id]);
+    }
+
+    /**
+     * Display the user's order history.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user(); // get the logged in user
+
+        $orders = Order::where('user_id', $user->id)->with('orderDetails.product')->get();
+
+        return response()->json($orders);
+    }
+
+    /**
+     * Display the specified order detail.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id, Request $request)
+    {
+        $user = $request->user(); // get the logged in user
+
+        $order = Order::where('user_id', $user->id)->where('id', $id)->with('orderDetails.product')->first();
+
+        if(!$order){
+            return response()->json(['message' => 'Order not found.'], 404);
+        }
+
+        return response()->json($order);
     }
 }
+
 
