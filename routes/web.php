@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\MerchantController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +32,16 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Cart
+Route::get('/cart', [CartController::class, 'show']);
+Route::post('/cart', [CartController::class, 'store']);
+Route::delete('/cart/{product}', [CartController::class, 'destroy']);
+
+// Merchants
+Route::get('/merchants/nearby', [MerchantController::class, 'nearby']);
+
+// Orders
+Route::post('/order', [OrderController::class, 'store']);
+Route::get('/order/{order}', [OrderController::class, 'show']);
+
