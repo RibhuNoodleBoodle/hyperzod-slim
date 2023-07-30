@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    public function up()
+    {
+        Schema::create('order_details', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('product_id');
+            $table->integer('quantity');
+            $table->decimal('price', 8, 2);
+            $table->timestamps();
+
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        });
+    }
+
     public function show(Order $order) {
         if (auth()->id() !== $order->user_id) {
             return response()->json(['error' => 'This order does not belong to you.'], 403);
