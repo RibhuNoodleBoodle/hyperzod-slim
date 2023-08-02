@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import LoginComponent from './components/LoginComponent.vue';
 import RegisterComponent from './components/RegisterComponent.vue';
+import ProductListComponent from './components/ProductListComponent.vue';
 import App from './components/App.vue';
 
 Vue.use(VueRouter);
@@ -16,8 +17,12 @@ const routes = [
         path: '/register',
         name: 'register',
         component: RegisterComponent
+    },
+    {
+        path: '/',
+        name: 'home',
+        component: ProductListComponent
     }
-    // Add your other routes here
 ];
 
 const router = new VueRouter({
