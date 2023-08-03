@@ -12,7 +12,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->float('price');
+            $table->float('price')->unsigned();
             $table->foreignId('merchant_id')->constrained();
             $table->timestamps();
         });
@@ -24,4 +24,3 @@ class CreateProductsTable extends Migration
         Schema::dropIfExists('products');
     }
 }
-

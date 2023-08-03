@@ -13,7 +13,7 @@ class CreateMerchantsTable extends Migration
         Schema::create('merchants', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->text('address');
             $table->float('latitude');
             $table->float('longitude');
@@ -27,4 +27,3 @@ class CreateMerchantsTable extends Migration
         Schema::dropIfExists('merchants');
     }
 }
-
