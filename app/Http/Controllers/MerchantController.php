@@ -28,21 +28,20 @@ class MerchantController extends Controller
         $lonW = $longitude - $radius / (111 * cos($latitude));
 
         // Query using bounding box first (indexed), then refine using Haversine (not indexed)
-        $merchants = Merchant::select(DB::raw("*, 
+        $merchants = Merchant::selectRaw("*, 
         ( 6371 * acos( cos( radians(?) ) *
         cos( radians( latitude ) )
         * cos( radians( longitude ) - radians(?)
         ) + sin( radians(?) ) *
         sin( radians( latitude ) ) )
-        ) AS distance", [$latitude, $longitude, $latitude]))
-        ->whereRaw("longitude BETWEEN ? AND ?", [$lonW, $lonE])
-        ->whereRaw("latitude BETWEEN ? AND ?", [$latS, $latN])
-        ->having("distance", "<", $radius)
-        ->orderBy("distance",'asc')
-        ->get();
+        ) AS distance", [$latitude, $longitude, $latitude])
+            ->whereBetween("longitude", [$lonW, $lonE])
+            ->whereBetween("latitude", [$latS, $latN])
+            ->having("distance", "<", $radius)
+            ->orderBy("distance", 'asc')
+            ->get();
 
         // Return merchant data
         return response()->json($merchants);
     }
 }
-
