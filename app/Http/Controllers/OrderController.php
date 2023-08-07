@@ -89,6 +89,14 @@ class OrderController extends Controller
 
         return response()->json($order);
     }
+    public function placeOrder(Request $request)
+    {
+        $request->validate([
+            'cart.*.product_id' => 'required|exists:products,id',
+            'cart.*.quantity' => 'required|integer|min:1',
+        ]);
+    }
+
 }
 
 

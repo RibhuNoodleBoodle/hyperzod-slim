@@ -26,6 +26,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -44,4 +45,3 @@ Route::get('/merchants/nearby', [MerchantController::class, 'nearby']);
 // Orders
 Route::post('/order', [OrderController::class, 'store']);
 Route::get('/order/{order}', [OrderController::class, 'show']);
-
