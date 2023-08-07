@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    use ApiResponseTrait;
     public function register(Request $request)
     {
         $request->validate([
@@ -24,7 +25,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'Registration successful'], 201);
+        return $this->successResponse(['message' => 'Registration successful'], 201);
     }
 
     public function login(Request $request)
@@ -38,7 +39,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            return response()->json(['token' => $token], 200);
+            return $this->successResponse(['token' => $token], 200);
         }
 
         throw ValidationException::withMessages(['email' => 'Invalid credentials']);
@@ -48,6 +49,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out'], 200);
+        return $this->successResponse(['message' => 'Logged out'], 200);
     }
 }
