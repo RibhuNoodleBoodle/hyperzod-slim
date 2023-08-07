@@ -39,7 +39,7 @@ class OrderController extends Controller
             $totalAmount += $item->product->price * $item->quantity;
 
             // Create order details
-            $orderDetail = new OrderDetail;
+            $orderDetail = new OrderItem;
             $orderDetail->order_id = $order->id;
             $orderDetail->product_id = $item->product_id;
             $orderDetail->quantity = $item->quantity;
@@ -66,7 +66,7 @@ class OrderController extends Controller
     {
         $user = $request->user(); // get the logged in user
 
-        $orders = Order::where('user_id', $user->id)->with('orderDetails.product')->get();
+        $orders = Order::where('user_id', $user->id)->with('OrderItem.product')->get();
 
         return response()->json($orders);
     }
@@ -81,7 +81,7 @@ class OrderController extends Controller
     {
         $user = $request->user(); // get the logged in user
 
-        $order = Order::where('user_id', $user->id)->where('id', $id)->with('orderDetails.product')->first();
+        $order = Order::where('user_id', $user->id)->where('id', $id)->with('OrderItem.product')->first();
 
         if(!$order){
             return response()->json(['message' => 'Order not found.'], 404);
