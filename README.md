@@ -1,6 +1,7 @@
 # Hyperzod Slim - Market Web App
 
 Hyperzod Slim is a slim version of a market web application built with Laravel 9 and Vue.js. It allows users to browse and purchase products from nearby merchants, manage their cart, and track their orders in real-time.
+I am currently not working on it anymore. I made this little project to learn and practice PHP/Laravel concepts. It is superincomplete and if you're looking into it, please understand I am still learning :)
 
 ## Features
 
